@@ -8,15 +8,23 @@ import (
 	"barista.run/modules/clock"
 	"barista.run/modules/volume"
 	"barista.run/outputs"
+	"barista.run/pango"
+	"barista.run/pango/icons/mdi"
 )
+
+func init() {
+	mdi.Load("/usr/local/lib/node_modules/@mdi/font/")
+}
 
 func main() {
 	barista.Add(volume.DefaultSink().Output(func(vol volume.Volume) bar.Output {
+		spacer := pango.Text(" ").Small()
+
 		var seg *bar.Segment
 		if vol.Mute {
-			seg = outputs.Text("Vol: Muted")
+			seg = outputs.Pango(pango.Icon("mdi-volume-off").Large().Rise(-2800), spacer, "Muted")
 		} else {
-			seg = outputs.Textf("Vol: %d%%", vol.Pct())
+			seg = outputs.Pango(pango.Icon("mdi-volume-high").Large().Rise(-2800), spacer, pango.Textf("%d%%", vol.Pct()))
 		}
 
 		return seg.OnClick(func(e bar.Event) {
