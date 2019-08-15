@@ -19,6 +19,7 @@ func main() {
 		if vol.Mute {
 			block.Icon = "volume-off"
 			block.Text = "Muted"
+			block.Color = "amber"
 		} else {
 			block.Icon = "volume-high"
 			block.Text = fmt.Sprintf("%d%%", vol.Pct())

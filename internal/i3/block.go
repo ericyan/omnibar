@@ -2,9 +2,16 @@ package i3
 
 import (
 	"barista.run/bar"
+	"barista.run/colors"
 	"barista.run/outputs"
 	"barista.run/pango"
 	"barista.run/pango/icons/mdi"
+)
+
+const (
+	red   = "#bf616a"
+	amber = "#ebcb8b"
+	green = "#a3be8c"
 )
 
 func init() {
@@ -15,6 +22,7 @@ func init() {
 type Block struct {
 	Icon    string
 	Text    string
+	Color   string
 	OnClick func(bar.Event)
 }
 
@@ -25,6 +33,15 @@ func (b *Block) Segments() []*bar.Segment {
 		pango.Text(" ").Small(),
 		b.Text,
 	)
+
+	switch b.Color {
+	case "red":
+		s = s.Color(colors.Hex(red))
+	case "amber":
+		s = s.Color(colors.Hex(amber))
+	case "green":
+		s = s.Color(colors.Hex(green))
+	}
 
 	if b.OnClick != nil {
 		s.OnClick(b.OnClick)
