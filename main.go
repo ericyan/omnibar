@@ -9,11 +9,44 @@ import (
 	"barista.run/modules/clock"
 	"barista.run/modules/netinfo"
 	"barista.run/modules/volume"
+	"barista.run/modules/wlan"
 
 	"github.com/ericyan/omnibar/internal/i3"
 )
 
 func main() {
+	barista.Add(wlan.Any().Output(func(wifi wlan.Info) bar.Output {
+		block := &i3.Block{
+			OnClick: func(e bar.Event) {
+				switch e.Button {
+				case bar.ButtonLeft:
+					exec.Command("gnome-control-center", "wifi").Run()
+				case bar.ButtonRight:
+					exec.Command("gnome-control-center", "network").Run()
+				}
+			},
+		}
+
+		if !wifi.Enabled() {
+			block.Icon = "wifi-strength-off"
+			block.Text = "Disconnected"
+			block.Color = "red"
+		}
+
+		if wifi.Connecting() {
+			block.Icon = "wifi-strength-outline"
+			block.Text = "Connecting..."
+			block.Color = "amber"
+		}
+
+		if wifi.Connected() {
+			block.Icon = "wifi-strength-4"
+			block.Text = wifi.SSID
+		}
+
+		return block
+	}))
+
 	barista.Add(netinfo.New().Output(func(net netinfo.State) bar.Output {
 		block := &i3.Block{
 			Icon: "ip",
