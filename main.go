@@ -7,12 +7,28 @@ import (
 	"barista.run"
 	"barista.run/bar"
 	"barista.run/modules/clock"
+	"barista.run/modules/netinfo"
 	"barista.run/modules/volume"
 
 	"github.com/ericyan/omnibar/internal/i3"
 )
 
 func main() {
+	barista.Add(netinfo.New().Output(func(net netinfo.State) bar.Output {
+		block := &i3.Block{
+			Icon: "ip",
+		}
+
+		if len(net.IPs) > 0 {
+			block.Text = net.IPs[0].String()
+		} else {
+			block.Text = "127.0.0.1"
+			block.Color = "red"
+		}
+
+		return block
+	}))
+
 	barista.Add(volume.DefaultSink().Output(func(vol volume.Volume) bar.Output {
 		block := &i3.Block{
 			Text: fmt.Sprintf("%d%%", vol.Pct()),
