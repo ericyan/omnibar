@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"time"
 
 	"barista.run"
 	"barista.run/bar"
@@ -146,7 +147,16 @@ func main() {
 		return block
 	}))
 
-	barista.Add(clock.Local().OutputFormat("Mon 15:04"))
+	barista.Add(clock.Local().Output(time.Minute, func(now time.Time) bar.Output {
+		return &i3.Block{
+			Text: now.Format("Mon 15:04"),
+			OnClick: func(e bar.Event) {
+				if e.Button == bar.ButtonLeft {
+					exec.Command("gsimplecal").Run()
+				}
+			},
+		}
+	}))
 
 	barista.Run()
 }
