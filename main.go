@@ -6,6 +6,7 @@ import (
 
 	"barista.run"
 	"barista.run/bar"
+	"barista.run/modules/battery"
 	"barista.run/modules/clock"
 	"barista.run/modules/netinfo"
 	"barista.run/modules/volume"
@@ -84,6 +85,40 @@ func main() {
 				vol.SetVolume(vol.Vol + (vol.Max-vol.Min)/100)
 			case bar.ScrollDown:
 				vol.SetVolume(vol.Vol - (vol.Max-vol.Min)/100)
+			}
+		}
+
+		return block
+	}))
+
+	barista.Add(battery.All().Output(func(bat battery.Info) bar.Output {
+		if bat.Status == battery.Disconnected || bat.Status == battery.Unknown {
+			return nil
+		}
+
+		block := &i3.Block{
+			OnClick: func(e bar.Event) {
+				if e.Button == bar.ButtonRight {
+					exec.Command("gnome-control-center", "power").Run()
+				}
+			},
+		}
+
+		pct := bat.RemainingPct()
+		block.Text = fmt.Sprintf("%d%%", pct)
+
+		if bat.PluggedIn() {
+			block.Icon = "battery-charging"
+		} else {
+			block.Icon = fmt.Sprintf("battery-%d", pct/10*10)
+
+			switch {
+			case pct > 60:
+				block.Color = "green"
+			case pct > 20:
+				block.Color = "amber"
+			default:
+				block.Color = "red"
 			}
 		}
 
