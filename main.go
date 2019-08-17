@@ -9,6 +9,7 @@ import (
 	"barista.run/modules/battery"
 	"barista.run/modules/clock"
 	"barista.run/modules/netinfo"
+	"barista.run/modules/sysinfo"
 	"barista.run/modules/volume"
 	"barista.run/modules/wlan"
 
@@ -58,6 +59,26 @@ func main() {
 		} else {
 			block.Text = "127.0.0.1"
 			block.Color = "red"
+		}
+
+		return block
+	}))
+
+	barista.Add(sysinfo.New().Output(func(sys sysinfo.Info) bar.Output {
+		block := &i3.Block{
+			Text: fmt.Sprintf("%.2f", sys.Loads[0]),
+		}
+
+		load := (sys.Loads[0] / float64(sys.Procs))
+		switch {
+		case load > 1:
+			block.Icon = "speedometer"
+			block.Color = "red"
+		case load > 0.5:
+			block.Icon = "speedometer-medium"
+			block.Color = "amber"
+		default:
+			block.Icon = "speedometer-slow"
 		}
 
 		return block
