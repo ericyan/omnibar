@@ -131,17 +131,25 @@ func main() {
 
 		if bat.PluggedIn() {
 			block.Icon = "battery-charging"
-		} else {
-			block.Icon = fmt.Sprintf("battery-%d", pct/10*10)
+			return block
+		}
 
-			switch {
-			case pct > 60:
-				block.Color = "green"
-			case pct > 20:
-				block.Color = "amber"
-			default:
-				block.Color = "red"
-			}
+		switch {
+		case pct == 100:
+			block.Icon = "battery"
+		case pct < 10:
+			block.Icon = "battery-outline"
+		default:
+			block.Icon = fmt.Sprintf("battery-%d", pct/10*10)
+		}
+
+		switch {
+		case pct > 60:
+			block.Color = "green"
+		case pct > 20:
+			block.Color = "amber"
+		default:
+			block.Color = "red"
 		}
 
 		return block
