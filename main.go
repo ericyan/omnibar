@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"runtime"
 	"time"
 
 	"barista.run"
@@ -70,7 +71,7 @@ func main() {
 			Text: fmt.Sprintf("%.2f", sys.Loads[0]),
 		}
 
-		load := (sys.Loads[0] / float64(sys.Procs))
+		load := (sys.Loads[0] / float64(runtime.NumCPU()))
 		switch {
 		case load > 1:
 			block.Icon = "speedometer"
