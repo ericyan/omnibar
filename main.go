@@ -20,6 +20,10 @@ import (
 
 func main() {
 	barista.Add(wlan.Any().Output(func(wifi wlan.Info) bar.Output {
+		if !wifi.Enabled() {
+			return nil
+		}
+
 		block := &i3.Block{
 			OnClick: func(e bar.Event) {
 				switch e.Button {
@@ -31,21 +35,18 @@ func main() {
 			},
 		}
 
-		if !wifi.Enabled() {
-			block.Icon = "wifi-strength-off"
-			block.Text = "Disconnected"
-			block.Color = "red"
-		}
-
-		if wifi.Connecting() {
+		switch {
+		case wifi.Connected():
+			block.Icon = "wifi-strength-4"
+			block.Text = wifi.SSID
+		case wifi.Connecting():
 			block.Icon = "wifi-strength-outline"
 			block.Text = "Connecting..."
 			block.Color = "amber"
-		}
-
-		if wifi.Connected() {
-			block.Icon = "wifi-strength-4"
-			block.Text = wifi.SSID
+		default:
+			block.Icon = "wifi-strength-off"
+			block.Text = "Disconnected"
+			block.Color = "red"
 		}
 
 		return block
