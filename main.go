@@ -16,6 +16,7 @@ import (
 	"barista.run/modules/wlan"
 
 	"github.com/ericyan/omnibar/internal/i3"
+	"github.com/ericyan/omnibar/modules/keyboard"
 )
 
 func main() {
@@ -155,6 +156,13 @@ func main() {
 		}
 
 		return block
+	}))
+
+	barista.Add(keyboard.New().Output(func(text string) bar.Output {
+		return &i3.Block{
+			Icon: "keyboard",
+			Text: text,
+		}
 	}))
 
 	barista.Add(clock.Local().Output(time.Minute, func(now time.Time) bar.Output {
