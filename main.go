@@ -162,6 +162,11 @@ func main() {
 		return &i3.Block{
 			Icon: "keyboard",
 			Text: text,
+			OnClick: func(e bar.Event) {
+				if e.Button == bar.ButtonRight {
+					exec.Command("gnome-control-center", "region").Run()
+				}
+			},
 		}
 	}))
 
